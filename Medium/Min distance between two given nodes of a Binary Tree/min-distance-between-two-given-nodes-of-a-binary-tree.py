@@ -9,35 +9,39 @@ class Node:
         self.right = None
 '''
 class Solution:
+    def __init__(self):
+        self.ans = 0
+
+    def solve(self, root, a, b):
+        if root is None or self.ans > 0:
+            return 0
+
+        l = self.solve(root.left, a, b)
+        r = self.solve(root.right, a, b)
+
+        if root.data == a or root.data == b:
+            if l != 0:
+                self.ans = l
+            elif r != 0:
+                self.ans = r
+            else:
+                return 1
+
+        if l != 0 and r != 0:
+            self.ans = l + r
+        elif l != 0:
+            return l + 1
+        elif r != 0:
+            return r + 1
+
+        return 0
+
     def findDist(self, root, a, b):
-        # Helper function to find the Lowest Common Ancestor (LCA)
-        def findLCA(node, p, q):
-            if not node:
-                return None
-            if node.data == p or node.data == q:
-                return node
-            left_lca = findLCA(node.left, p, q)
-            right_lca = findLCA(node.right, p, q)
-            if left_lca and right_lca:
-                return node
-            return left_lca if left_lca else right_lca
+        if a == b:
+            return 0
 
-        # Helper function to find the distance between a node and a target
-        def findDistance(node, target, dist):
-            if not node:
-                return float('inf')
-            if node.data == target:
-                return dist
-            return min(findDistance(node.left, target, dist + 1), findDistance(node.right, target, dist + 1))
-
-        # Find the LCA of the given nodes
-        lca = findLCA(root, a, b)
-        # Calculate the distance from the LCA to node 'a'
-        dist_a = findDistance(lca, a, 0)
-        # Calculate the distance from the LCA to node 'b'
-        dist_b = findDistance(lca, b, 0)
-        # Return the sum of distances between the LCA and both nodes
-        return dist_a + dist_b
+        self.solve(root, a, b)
+        return self.ans
 
 
 #{ 
